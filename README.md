@@ -9,6 +9,7 @@
 * numpy：1.14.2
 * gensim：3.4.0
 * nltk：3.2.3
+* jieba：0.39
 * word2wec中文训练模型
 <https://weibo.com/p/23041816d74e01f0102x77v>
 
