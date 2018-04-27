@@ -15,6 +15,14 @@
 
 参考链接：<https://weibo.com/p/23041816d74e01f0102x77v>
 
+# 代码使用
+
+### 模型训练
+        # python train.py
+
+### 模型评估
+        # python eval.py
+
 # 代码参考
 
 * [dhwajraj/deep-siamese-text-similarity](https://github.com/dhwajraj/deep-siamese-text-similarity)

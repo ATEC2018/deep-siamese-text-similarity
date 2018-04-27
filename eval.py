@@ -14,8 +14,9 @@ from input_helpers import InputHelper
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
 tf.flags.DEFINE_string("eval_filepath", "validation.txt0", "Evaluate on this data (Default: None)")
-tf.flags.DEFINE_string("vocab_filepath", "runs/1512222837/checkpoints/vocab", "Load training time vocabulary (Default: None)")
-tf.flags.DEFINE_string("model", "runs/1512222837/checkpoints/model-5000", "Load trained model checkpoint (Default: None)")
+# 注意将'1524812987'更换成自己实际的目录名称
+tf.flags.DEFINE_string("vocab_filepath", "runs/1524812987/checkpoints/vocab", "Load training time vocabulary (Default: None)")
+tf.flags.DEFINE_string("model", "runs/1524812987/checkpoints/model-5000", "Load trained model checkpoint (Default: None)")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
