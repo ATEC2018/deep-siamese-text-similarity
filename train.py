@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+#coding=utf-8
 import tensorflow as tf
 import numpy as np
 import re
@@ -13,20 +13,25 @@ from siamese_network_semantic import SiameseLSTMw2v
 from tensorflow.contrib import learn
 import gzip
 from random import random
+
+import sys
 # Parameters
 # ==================================================
 
-tf.flags.DEFINE_boolean("is_char_based", True, "is character based syntactic similarity. "
+# 使用基于word（词）模式
+tf.flags.DEFINE_boolean("is_char_based", False, "is character based syntactic similarity. "
                                                "if false then word embedding based semantic similarity is used."
                                                "(default: True)")
-
-tf.flags.DEFINE_string("word2vec_model", "wiki.simple.vec", "word2vec pre-trained embeddings file (default: None)")
-tf.flags.DEFINE_string("word2vec_format", "text", "word2vec pre-trained embeddings file format (bin/text/textgz)(default: None)")
-
-tf.flags.DEFINE_integer("embedding_dim", 300, "Dimensionality of character embedding (default: 300)")
+# word2vec模型（采用已训练好的中文模型）
+tf.flags.DEFINE_string("word2vec_model", "../word2vecmodel/news_12g_baidubaike_20g_novel_90g_embedding_64.bin", "word2vec pre-trained embeddings file (default: None)")
+#　模型格式为bin
+tf.flags.DEFINE_string("word2vec_format", "bin", "word2vec pre-trained embeddings file format (bin/text/textgz)(default: None)")
+# word2vec词嵌入维数（64/128可选）
+tf.flags.DEFINE_integer("embedding_dim", 64, "Dimensionality of character embedding (default: 300)")
 tf.flags.DEFINE_float("dropout_keep_prob", 1.0, "Dropout keep probability (default: 1.0)")
 tf.flags.DEFINE_float("l2_reg_lambda", 0.0, "L2 regularizaion lambda (default: 0.0)")
-tf.flags.DEFINE_string("training_files", "person_match.train2", "training file (default: None)")  #for sentence semantic similarity use "train_snli.txt"
+# 训练文件已完成中文分词，并格式化为满足输入要求的文件格式
+tf.flags.DEFINE_string("training_files", "./train_data/atec_nlp_sim_train_format.csv", "training file (default: None)")  #for sentence semantic similarity use "train_snli.txt"
 tf.flags.DEFINE_integer("hidden_units", 50, "Number of hidden units (default:50)")
 
 # Training parameters
@@ -48,6 +53,19 @@ print("")
 if FLAGS.training_files==None:
     print("Input Files List is empty. use --training_files argument.")
     exit()
+
+
+def train_file_preprocess(input_file, output_file):
+    '''
+    完成中文分词，并格式化为满足输入要求的文件格式
+    :param input_file:
+    :param output_file:
+    :return:
+    '''
+    pass
+
+
+train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
 
 
 max_document_length=15
