@@ -13,7 +13,7 @@
 * jieba：0.39
 * word2wec中文训练模型
 
-<https://weibo.com/p/23041816d74e01f0102x77v>
+参考链接：<https://weibo.com/p/23041816d74e01f0102x77v>
 
 # 代码参考
 
