@@ -15,6 +15,7 @@ import gzip
 from random import random
 
 import sys
+import csv
 # Parameters
 # ==================================================
 
@@ -62,10 +63,26 @@ def train_file_preprocess(input_file, output_file):
     :param output_file:
     :return:
     '''
-    pass
+    f=open(input_file)
+    lines=f.readlines()
+    cnt=0;
+    for row in lines:
+        list= row.split('\t')
+        sentence1=list[1].strip()
+        print (sentence1)
+        sentence2=list[2].strip()
+        print (sentence2)
+        val=list[3].strip()
+        print (val)
+        cnt+=1
+        if cnt>=3:
+            sys.exit(0)
 
 
 train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
+
+
+sys.exit(0)
 
 
 max_document_length=15
