@@ -103,10 +103,10 @@ def train_file_preprocess(input_file, output_file):
 
 
 
-train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
+#train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
 
 
-sys.exit(0)
+#sys.exit(0)
 
 
 max_document_length=15
@@ -223,12 +223,13 @@ with tf.Graph().as_default():
             s = re.sub('[^0-9a-zA-Z]+', '', w)
             if w in inpH.pre_emb:
                 arr=inpH.pre_emb[w]
-            elif w.lower() in inpH.pre_emb:
-                arr=inpH.pre_emb[w.lower()]
-            elif s in inpH.pre_emb:
-                arr=inpH.pre_emb[s]
-            elif s.isdigit():
-                arr=inpH.pre_emb["zero"]
+            # eddy
+            # elif w.lower() in inpH.pre_emb:
+            #     arr=inpH.pre_emb[w.lower()]
+            # elif s in inpH.pre_emb:
+            #     arr=inpH.pre_emb[s]
+            # elif s.isdigit():
+            #     arr=inpH.pre_emb["zero"]
             if len(arr)>0:
                 idx = vocab_processor.vocabulary_.get(w)
                 initW[idx]=np.asarray(arr).astype(np.float32)

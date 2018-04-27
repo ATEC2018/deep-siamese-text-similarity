@@ -7,7 +7,8 @@ import numpy as np
 import time
 import gc
 from tensorflow.contrib import learn
-from gensim.models.word2vec import Word2Vec
+#from gensim.models.word2vec import Word2Vec
+import gensim
 import gzip
 from random import random
 from preprocess import MyVocabularyProcessor
@@ -51,7 +52,8 @@ class InputHelper(object):
                 self.pre_emb[st]=np.asarray(l[1:])
             num_keys=len(self.pre_emb)
         else:
-            self.pre_emb = Word2Vec.load_word2vec_format(emb_path,binary=True)
+            # self.pre_emb = Word2Vec.load_word2vec_format(emb_path,binary=True)
+            self.pre_emb =gensim.models.KeyedVectors.load_word2vec_format(emb_path,binary=True)#eddy
             self.pre_emb.init_sims(replace=True)
             num_keys=len(self.pre_emb.vocab)
         print("loaded word2vec len ", num_keys)
