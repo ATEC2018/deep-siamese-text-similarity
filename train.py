@@ -15,7 +15,7 @@ import gzip
 from random import random
 
 import sys
-import csv
+import jieba
 # Parameters
 # ==================================================
 
@@ -63,20 +63,44 @@ def train_file_preprocess(input_file, output_file):
     :param output_file:
     :return:
     '''
-    f=open(input_file)
-    lines=f.readlines()
+    f_input=open(input_file, 'r')
+    f_output=open(output_file, 'w')
+    lines_input=f_input.readlines()
     cnt=0;
-    for row in lines:
-        list= row.split('\t')
-        sentence1=list[1].strip()
-        print (sentence1)
-        sentence2=list[2].strip()
-        print (sentence2)
-        val=list[3].strip()
-        print (val)
+    for row in lines_input:
         cnt+=1
-        if cnt>=3:
-            sys.exit(0)
+        print(cnt)
+
+        list= row.split('\t')
+        # part 1
+        sentence1=list[1].strip()
+        # print (sentence1)
+
+        sentence1 = jieba.lcut(sentence1)
+        format_sentence1 = ''
+        for word in sentence1:
+            format_sentence1 += ' {}'.format(word)
+        # print (format_sentence1)
+
+        # part2
+        sentence2=list[2].strip()
+        # print (sentence2)
+
+        sentence2 = jieba.lcut(sentence2)
+        format_sentence2 = ''
+        for word in sentence2:
+            format_sentence2 += ' {}'.format(word)
+        # print (format_sentence2)
+
+        # part3
+        val=list[3].strip()
+        # print (val)
+
+        format_sentence_all=format_sentence1.strip()+'\t'+format_sentence2.strip()+'\t'+val+'\n'
+        f_output.write(format_sentence_all)
+
+
+
 
 
 train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
