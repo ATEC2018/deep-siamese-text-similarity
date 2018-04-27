@@ -20,3 +20,7 @@
 * [dhwajraj/deep-siamese-text-similarity](https://github.com/dhwajraj/deep-siamese-text-similarity)
 
 版本：a61f07f6bef76665f8ba2df12f34b25380016613
+
+# AETC2018赛题描述
+相关链接：<https://github.com/ATEC2018/deep-siamese-text-similarity/blob/master/ATEC2018.md>
+
