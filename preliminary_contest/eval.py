@@ -90,8 +90,13 @@ with graph.as_default():
 
         f_output = open(output_file, 'a')
         index = 1
+        predic_value=0
         for item in all_d:
-            f_output.write('{}\t{}\n'.format(index, item))
+            if item>0:
+                predic_value=1
+            else:
+                predic_value=0
+            f_output.write('{}\t{}\n'.format(index, predic_value))
             index+=1
 
         # correct_predictions = float(np.mean(all_d == y_test))
