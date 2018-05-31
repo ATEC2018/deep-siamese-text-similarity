@@ -15,7 +15,6 @@ import gzip
 from random import random
 
 import sys
-import jieba
 # Parameters
 # ==================================================
 
@@ -55,62 +54,14 @@ if FLAGS.training_files==None:
     print("Input Files List is empty. use --training_files argument.")
     exit()
 
-
-def train_file_preprocess(input_file, output_file):
-    '''
-    完成中文分词，并格式化为满足输入要求的文件格式
-    :param input_file:
-    :param output_file:
-    :return:
-    '''
-    f_input=open(input_file, 'r')
-    f_output=open(output_file, 'w')
-    lines_input=f_input.readlines()
-    cnt=0;
-    for row in lines_input:
-        cnt+=1
-        print(cnt)
-
-        list= row.split('\t')
-        # part 1
-        sentence1=list[1].strip()
-        # print (sentence1)
-
-        sentence1 = jieba.lcut(sentence1)
-        format_sentence1 = ''
-        for word in sentence1:
-            format_sentence1 += ' {}'.format(word)
-        # print (format_sentence1)
-
-        # part2
-        sentence2=list[2].strip()
-        # print (sentence2)
-
-        sentence2 = jieba.lcut(sentence2)
-        format_sentence2 = ''
-        for word in sentence2:
-            format_sentence2 += ' {}'.format(word)
-        # print (format_sentence2)
-
-        # part3
-        val=list[3].strip()
-        # print (val)
-
-        format_sentence_all=format_sentence1.strip()+'\t'+format_sentence2.strip()+'\t'+val+'\n'
-        f_output.write(format_sentence_all)
-
-
-
-
-
-#train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
+inpH = InputHelper()
+#inpH.train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
 
 
 #sys.exit(0)
 
 
 max_document_length=15
-inpH = InputHelper()
 train_set, dev_set, vocab_processor,sum_no_of_batches = inpH.getDataSets(FLAGS.training_files,max_document_length, 10,
                                                                          FLAGS.batch_size, FLAGS.is_char_based)
 trainableEmbeddings=False
