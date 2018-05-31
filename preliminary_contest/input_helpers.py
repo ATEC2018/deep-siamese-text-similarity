@@ -115,16 +115,16 @@ class InputHelper(object):
         print("Loading testing/labelled data from "+filepath)
         x1=[]
         x2=[]
-        y=[]
+        # y=[]
         # positive samples from file
         for line in open(filepath):
             l=line.strip().split("\t")
-            if len(l)<3:
-                continue
+            # if len(l)<3:
+            #     continue
             x1.append(l[0].lower())
             x2.append(l[1].lower())
-            y.append(int(l[2])) #这部分是和基准代码不一样的
-        return np.asarray(x1),np.asarray(x2),np.asarray(y)  
+            # y.append(int(l[2]))
+        return np.asarray(x1),np.asarray(x2)
  
     def batch_iter(self, data, batch_size, num_epochs, shuffle=True):
         """
@@ -207,7 +207,7 @@ class InputHelper(object):
         return train_set,dev_set,vocab_processor,sum_no_of_batches
     
     def getTestDataSet(self, data_path, vocab_path, max_document_length):
-        x1_temp,x2_temp,y = self.getTsvTestData(data_path)
+        x1_temp,x2_temp = self.getTsvTestData(data_path)
 
         # Build vocabulary
         vocab_processor = MyVocabularyProcessor(max_document_length,min_frequency=0)
@@ -219,9 +219,9 @@ class InputHelper(object):
         # Randomly shuffle data
         del vocab_processor
         gc.collect()
-        return x1,x2, y
+        return x1,x2
 
-    def train_file_preprocess(self, input_file, output_file):
+    def eval_file_preprocess(self, input_file, output_file):
         '''
         完成中文分词，并格式化为满足输入要求的文件格式
         :param input_file:
@@ -257,10 +257,10 @@ class InputHelper(object):
                 format_sentence2 += ' {}'.format(word)
             # print (format_sentence2)
 
-            # part3
-            val = list[3].strip()
-            # print (val)
+            # # part3
+            # val = list[3].strip()
+            # # print (val)
 
-            format_sentence_all = format_sentence1.strip() + '\t' + format_sentence2.strip() + '\t' + val + '\n'
+            format_sentence_all = format_sentence1.strip() + '\t' + format_sentence2.strip() + '\n'
             f_output.write(format_sentence_all)
 
