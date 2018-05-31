@@ -6,10 +6,10 @@
 * Anaconda：2-4.4.0（python 2.7）
 
 历史版本下载：<https://repo.continuum.io/archive/>
-* TensorFlow：1.2.1
-* numpy：1.14.2
+* TensorFlow：1.5.1
+* numpy：1.14.3
 * gensim：3.4.0
-* nltk：3.2.3
+* (nltk：3.2.3)
 * jieba：0.39
 * word2wec中文训练模型
 
