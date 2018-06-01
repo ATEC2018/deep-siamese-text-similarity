@@ -232,6 +232,7 @@ class InputHelper(object):
         f_output = open(output_file, 'w')
         lines_input = f_input.readlines()
         cnt = 0;
+        jieba.load_userdict('./dict.txt')
         for row in lines_input:
             cnt += 1
             # print(cnt)
@@ -240,7 +241,6 @@ class InputHelper(object):
             # part 1
             sentence1 = list[1].strip()
             # print (sentence1)
-
             sentence1 = jieba.lcut(sentence1)
             format_sentence1 = ''
             for word in sentence1:

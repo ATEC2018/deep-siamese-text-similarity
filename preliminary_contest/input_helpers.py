@@ -232,6 +232,8 @@ class InputHelper(object):
         f_output = open(output_file, 'w')
         lines_input = f_input.readlines()
         cnt = 0;
+
+        jieba.load_userdict('./dict.txt')
         for row in lines_input:
             cnt += 1
             # print(cnt)

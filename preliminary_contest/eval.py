@@ -33,7 +33,6 @@ if eval_file==None or vocab_filepath==None or model==None :
 
 # load data and map id-transform based on training time vocabulary
 inpH = InputHelper()
-inpH.eval_file_preprocess(input_file, eval_file)
 x1_test,x2_test= inpH.getTestDataSet(eval_file, vocab_filepath, 30)
 
 print("\nEvaluating...\n")

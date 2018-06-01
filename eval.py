@@ -7,6 +7,7 @@ import time
 import datetime
 from tensorflow.contrib import learn
 from input_helpers import InputHelper
+import sys
 # Parameters
 # ==================================================
 
@@ -15,8 +16,8 @@ tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
 tf.flags.DEFINE_string("eval_filepath", "validation.txt0", "Evaluate on this data (Default: None)")
 # 注意将'1524812987'更换成自己实际的目录名称
-tf.flags.DEFINE_string("vocab_filepath", "runs/1524812987/checkpoints/vocab", "Load training time vocabulary (Default: None)")
-tf.flags.DEFINE_string("model", "runs/1524812987/checkpoints/model-5000", "Load trained model checkpoint (Default: None)")
+tf.flags.DEFINE_string("vocab_filepath", "runs/1527811912/checkpoints/vocab", "Load training time vocabulary (Default: None)")
+tf.flags.DEFINE_string("model", "runs/1527811912/checkpoints/model-20000", "Load trained model checkpoint (Default: None)")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
@@ -36,6 +37,9 @@ if FLAGS.eval_filepath==None or FLAGS.vocab_filepath==None or FLAGS.model==None 
 
 # load data and map id-transform based on training time vocabulary
 inpH = InputHelper()
+inpH.train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
+sys.exit(0)
+
 x1_test,x2_test,y_test = inpH.getTestDataSet(FLAGS.eval_filepath, FLAGS.vocab_filepath, 30)
 
 print("\nEvaluating...\n")

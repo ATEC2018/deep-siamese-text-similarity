@@ -55,10 +55,10 @@ if FLAGS.training_files==None:
     exit()
 
 inpH = InputHelper()
-#inpH.eval_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
+inpH.train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
 
 
-#sys.exit(0)
+sys.exit(0)
 
 
 max_document_length=15
