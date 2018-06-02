@@ -1,58 +1,45 @@
 #! /usr/bin/env python
-#coding=utf-8
+# coding=utf-8
 import tensorflow as tf
 import numpy as np
 import os
 import time
 import datetime
-from tensorflow.contrib import learn
 from input_helpers import InputHelper
 import sys
+
 # Parameters
 # ==================================================
 
 # Eval Parameters
-tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
-tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
-tf.flags.DEFINE_string("eval_filepath", "validation.txt0", "Evaluate on this data (Default: None)")
-# 注意将'1524812987'更换成自己实际的目录名称
-tf.flags.DEFINE_string("vocab_filepath", "runs/1527811912/checkpoints/vocab", "Load training time vocabulary (Default: None)")
-tf.flags.DEFINE_string("model", "runs/1527811912/checkpoints/model-20000", "Load trained model checkpoint (Default: None)")
+# 批大小
+BATCH_SIZE = 64
+# 验证集文件
+EVAL_FILEPATH = 'validation.txt0'
+# 词表（在训练过程中已生成）
+VOCAB_FILEPATH = 'runs/1527909561/checkpoints/vocab'
+# 模型文件
+MODEL = 'runs/1527909561/checkpoints/model-20000'
 
 # Misc Parameters
-tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
-tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
+ALLOW_SOFT_PLACEMENT = True
+LOG_DEVICE_PLACEMENT = False
 
-
-FLAGS = tf.flags.FLAGS
-# FLAGS._parse_flags()
-print("\nParameters:")
-for attr, value in sorted(FLAGS.flag_values_dict().items()):
-    print("{}={}".format(attr.upper(), value))
-print("")
-
-if FLAGS.eval_filepath==None or FLAGS.vocab_filepath==None or FLAGS.model==None :
-    print("Eval or Vocab filepaths are empty.")
-    exit()
-
-# load data and map id-transform based on training time vocabulary
 inpH = InputHelper()
-inpH.train_file_preprocess('./train_data/atec_nlp_sim_train.csv', './train_data/atec_nlp_sim_train_format.csv')
-sys.exit(0)
 
-x1_test,x2_test,y_test = inpH.getTestDataSet(FLAGS.eval_filepath, FLAGS.vocab_filepath, 30)
+x1_test, x2_test, y_test = inpH.getTestDataSet(EVAL_FILEPATH, VOCAB_FILEPATH, 30)
 
 print("\nEvaluating...\n")
 
 # Evaluation
 # ==================================================
-checkpoint_file = FLAGS.model
+checkpoint_file = MODEL
 print checkpoint_file
 graph = tf.Graph()
 with graph.as_default():
     session_conf = tf.ConfigProto(
-      allow_soft_placement=FLAGS.allow_soft_placement,
-      log_device_placement=FLAGS.log_device_placement)
+        allow_soft_placement=ALLOW_SOFT_PLACEMENT,
+        log_device_placement=LOG_DEVICE_PLACEMENT)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
         # Load the saved meta graph and restore variables
@@ -73,21 +60,23 @@ with graph.as_default():
 
         sim = graph.get_operation_by_name("accuracy/temp_sim").outputs[0]
 
-        #emb = graph.get_operation_by_name("embedding/W").outputs[0]
-        #embedded_chars = tf.nn.embedding_lookup(emb,input_x)
+        # emb = graph.get_operation_by_name("embedding/W").outputs[0]
+        # embedded_chars = tf.nn.embedding_lookup(emb,input_x)
         # Generate batches for one epoch
-        batches = inpH.batch_iter(list(zip(x1_test,x2_test,y_test)), 2*FLAGS.batch_size, 1, shuffle=False)
+        batches = inpH.batch_iter(list(zip(x1_test, x2_test, y_test)), 2 * BATCH_SIZE, 1, shuffle=False)
         # Collect the predictions here
         all_predictions = []
-        all_d=[]
+        all_d = []
         for db in batches:
-            x1_dev_b,x2_dev_b,y_dev_b = zip(*db)
-            batch_predictions, batch_acc, batch_sim = sess.run([predictions,accuracy,sim], {input_x1: x1_dev_b, input_x2: x2_dev_b, input_y:y_dev_b, dropout_keep_prob: 1.0})
+            x1_dev_b, x2_dev_b, y_dev_b = zip(*db)
+            batch_predictions, batch_acc, batch_sim = sess.run([predictions, accuracy, sim],
+                                                               {input_x1: x1_dev_b, input_x2: x2_dev_b,
+                                                                input_y: y_dev_b, dropout_keep_prob: 1.0})
             all_predictions = np.concatenate([all_predictions, batch_predictions])
             print(batch_predictions)
             all_d = np.concatenate([all_d, batch_sim])
             print("DEV acc {}".format(batch_acc))
         for ex in all_predictions:
-            print ex 
+            print ex
         correct_predictions = float(np.mean(all_d == y_test))
         print("Accuracy: {:g}".format(correct_predictions))
