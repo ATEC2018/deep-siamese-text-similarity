@@ -21,14 +21,19 @@ print (output_file)
 # Eval Parameters
 batch_size = 64  # 批大小
 vocab_filepath = './vocab/vocab'  # 训练使使用的词表
-model = './models/model-11000'  # 加载训练模型
+model = './models/model-22000'  # 加载训练模型
 allow_soft_placement = True
 log_device_placement = False
-confidence = 0.8
+
+# 语句最多长度(包含多少个词)
+MAX_DOCUMENT_LENGTH = 12
 
 # load data and map id-transform based on training time vocabulary
 inpH = InputHelper()
-x1_test, x2_test = inpH.getTestDataSet(eval_file, vocab_filepath, 30)
+x1_test, x2_test = inpH.getTestDataSet(eval_file, vocab_filepath, MAX_DOCUMENT_LENGTH)
+
+# for index, _ in enumerate(x1_test):
+#     print(index, x1_test[index], x2_test[index])
 
 print("\nEvaluating...\n")
 

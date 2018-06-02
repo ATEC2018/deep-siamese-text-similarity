@@ -17,9 +17,12 @@ BATCH_SIZE = 64
 # 验证集文件
 EVAL_FILEPATH = 'validation.txt0'
 # 词表（在训练过程中已生成）
-VOCAB_FILEPATH = 'runs/1527917207/checkpoints/vocab'
+VOCAB_FILEPATH = 'runs/1527938927/checkpoints/vocab'
 # 模型文件
-MODEL = 'runs/1527917207/checkpoints/model-14000'
+MODEL = 'runs/1527938927/checkpoints/model-22000'
+
+# 语句最多长度(包含多少个词)
+MAX_DOCUMENT_LENGTH = 12
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True
@@ -27,7 +30,7 @@ LOG_DEVICE_PLACEMENT = False
 
 inpH = InputHelper()
 
-x1_test, x2_test, y_test = inpH.getTestDataSet(EVAL_FILEPATH, VOCAB_FILEPATH, 30)
+x1_test, x2_test, y_test = inpH.getTestDataSet(EVAL_FILEPATH, VOCAB_FILEPATH, MAX_DOCUMENT_LENGTH)
 
 print("\nEvaluating...\n")
 

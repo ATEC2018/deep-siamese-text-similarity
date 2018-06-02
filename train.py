@@ -49,7 +49,7 @@ EVALUATE_EVERY = 1000
 CHECKOUTPOINT_EVERY = 1000
 
 # 语句最多长度(包含多少个词)
-MAX_DOCUMENT_LENGTH = 50
+MAX_DOCUMENT_LENGTH = 12
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True
@@ -67,8 +67,14 @@ inpH = InputHelper()
 train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINING_FILES_RAW, MAX_DOCUMENT_LENGTH,
                                                                           10,
                                                                           BATCH_SIZE)
-# for index, value in enumerate(train_set[0]):
-#     print(index, value)
+
+dev_batches = inpH.batch_iter(list(zip(dev_set[0], dev_set[1], dev_set[2])), BATCH_SIZE, 1)
+# for index,dev_batch in enumerate(dev_batches):
+#     print(index, dev_batch)
+# sys.exit(0)
+
+# for index, value in enumerate(dev_set[2]):
+#     print(index, dev_set[0][index], dev_set[1][index], dev_set[2][index])
 # sys.exit(0)
 
 # for index, w in enumerate(vocab_processor.vocabulary_._mapping):

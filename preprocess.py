@@ -37,7 +37,7 @@ class MyVocabularyProcessor(learn.preprocessing.VocabularyProcessor):
         Yields:
           x: iterable, [n_samples, max_document_length]. Word-id matrix.
         """
-        print('len(raw_documents)= {}'.format(len(raw_documents)))
+        # print('len(raw_documents)= {}'.format(len(raw_documents)))
         # print('raw_documents= {}'.format(raw_documents))
 
         # for index,value in enumerate(raw_documents):
