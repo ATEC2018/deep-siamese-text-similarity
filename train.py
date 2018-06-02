@@ -13,6 +13,12 @@ import gzip
 from random import random
 import sys
 
+# a=['你好','上帝','下地']
+# b=[u'你好',u'上帝',u'下地']
+# print(a)
+# print(b)
+# sys.exit(0)
+
 # Parameters
 # word2vec模型（采用已训练好的中文模型）
 WORD2VEC_MODEL = '../word2vecmodel/news_12g_baidubaike_20g_novel_90g_embedding_64.bin'
@@ -21,6 +27,7 @@ WORD2VEC_FORMAT = 'bin'
 # word2vec词嵌入维数（64/128可选）
 EMBEDDING_DIM = 64
 # dropout比例设置
+# DROPOUT_KEEP_PROB = '0.5'
 DROPOUT_KEEP_PROB = '1.0'
 # L2正规化系数
 L2_REG_LAMBDA = 0.0
@@ -48,15 +55,22 @@ MAX_DOCUMENT_LENGTH = 15
 ALLOW_SOFT_PLACEMENT = True
 LOG_DEVICE_PLACEMENT = False
 
+print ('训练开始......................')
+start_time = datetime.datetime.now().minute
+
 inpH = InputHelper()
 # 将原始的训练文件转化为分词后的训练文件
 # inpH.train_file_preprocess(TRAINING_FILES_RAW, TRAINING_FILES_FORMAT)
 # sys.exit(0)
 
 
-train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINING_FILES_FORMAT, MAX_DOCUMENT_LENGTH,
+train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINING_FILES_RAW, MAX_DOCUMENT_LENGTH,
                                                                           10,
                                                                           BATCH_SIZE)
+# for index, w in enumerate(vocab_processor.vocabulary_._mapping):
+#     print('vocab-{}:{}'.format(index, w))
+# sys.exit(0)
+
 inpH.loadW2V(WORD2VEC_MODEL, WORD2VEC_FORMAT)
 
 with tf.Graph().as_default():
@@ -134,10 +148,13 @@ with tf.Graph().as_default():
     initW = np.random.uniform(-0.25, 0.25, (len(vocab_processor.vocabulary_), EMBEDDING_DIM))
     # load any vectors from the word2vec
     print("initializing initW with pre-trained word2vec embeddings")
-    for w in vocab_processor.vocabulary_._mapping:
+    for index, w in enumerate(vocab_processor.vocabulary_._mapping):
+        print('vocab-{}:{}'.format(index, w))
+
         arr = []
         if w in inpH.pre_emb:
             arr = inpH.pre_emb[w]
+            # print('=====arr-{},{}'.format(index, arr))
         if len(arr) > 0:
             idx = vocab_processor.vocabulary_.get(w)
             initW[idx] = np.asarray(arr).astype(np.float32)
@@ -201,6 +218,9 @@ with tf.Graph().as_default():
         return accuracy
 
 
+    ##################
+    # sys.exit(0)
+
     # Generate batches
     batches = inpH.batch_iter(
         list(zip(train_set[0], train_set[1], train_set[2])), BATCH_SIZE, NUM_EPOCHS)
@@ -217,6 +237,7 @@ with tf.Graph().as_default():
         train_step(x1_batch, x2_batch, y_batch)
         current_step = tf.train.global_step(sess, global_step)
         sum_acc = 0.0
+        cnt = 0
         if current_step % EVALUATE_EVERY == 0:
             print("\nEvaluation:")
             dev_batches = inpH.batch_iter(list(zip(dev_set[0], dev_set[1], dev_set[2])), BATCH_SIZE, 1)
@@ -228,7 +249,10 @@ with tf.Graph().as_default():
                     continue
                 acc = dev_step(x1_dev_b, x2_dev_b, y_dev_b)
                 sum_acc = sum_acc + acc
-            print("")
+                cnt += 1
+
+            sum_acc /= cnt
+            print("sum_acc= {}".format(sum_acc))
         if current_step % CHECKOUTPOINT_EVERY == 0:
             if sum_acc >= max_validation_acc:
                 max_validation_acc = sum_acc
@@ -237,3 +261,9 @@ with tf.Graph().as_default():
                                      as_text=False)
                 print("Saved model {} with sum_accuracy={} checkpoint to {}\n".format(nn, max_validation_acc,
                                                                                       checkpoint_prefix))
+
+        print('max_validation_acc(each batch)= {}'.format(max_validation_acc))
+
+end_time = datetime.datetime.now().minute
+train_duration = end_time - start_time
+print('训练结束, 训练总耗时: {} 分钟'.format(train_duration))

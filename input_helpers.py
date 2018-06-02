@@ -74,16 +74,24 @@ class InputHelper(object):
         y = []
         # positive samples from file
         for line in open(filepath):
+            # print(line)
             l = line.strip().split("\t")
-            if len(l) < 2:
-                continue
+
+            # print(l[0])
+            # print(l[1])
+            # print(l[2])
+
             if random() > 0.5:
-                x1.append(l[0].lower())
-                x2.append(l[1].lower())
-            else:
                 x1.append(l[1].lower())
-                x2.append(l[0].lower())
-            y.append(int(l[2]))
+                x2.append(l[2].lower())
+            else:
+                x1.append(l[2].lower())
+                x2.append(l[1].lower())
+            y.append(int(l[3]))
+
+        # print(x1)
+        # print(x2)
+        # print(y)
         return np.asarray(x1), np.asarray(x2), np.asarray(y)
 
     def getTsvDataCharBased(self, filepath):
@@ -171,12 +179,16 @@ class InputHelper(object):
 
     def getDataSets(self, training_paths, max_document_length, percent_dev, batch_size):
         x1_text, x2_text, y = self.getTsvData(training_paths)
+        # print('x1_text= {}'.format(x1_text))
+        # print('x2_text= {}'.format(x2_text))
+        # print ('y= {}'.format(y))
 
         # Build vocabulary
         print("Building vocabulary")
         vocab_processor = MyVocabularyProcessor(max_document_length, min_frequency=0)
         vocab_processor.fit_transform(np.concatenate((x2_text, x1_text), axis=0))
         print("Length of loaded vocabulary ={}".format(len(vocab_processor.vocabulary_)))
+
         i1 = 0
         train_set = []
         dev_set = []

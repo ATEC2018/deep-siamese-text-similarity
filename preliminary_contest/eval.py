@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#coding=utf-8
+# coding=utf-8
 import tensorflow as tf
 import numpy as np
 import os
@@ -8,32 +8,27 @@ import datetime
 from tensorflow.contrib import learn
 from input_helpers import InputHelper
 import sys
+
 # Parameters
 # ==================================================
 
-input_file=sys.argv[1] # 待评估文件
-eval_file= '{}_format'.format(input_file) # 待评估文件格式化后文件
-output_file=sys.argv[2] # 评估后输出文件
+eval_file = sys.argv[1]  # 待评估文件
+output_file = sys.argv[2]  # 评估后输出文件
 
-
-print (input_file)
+print (eval_file)
 print (output_file)
 
 # Eval Parameters
-batch_size=64 # 批大小
-vocab_filepath='./vocab/vocab'#训练使使用的词表
-model='./models/model-11000' #加载训练模型
-allow_soft_placement=True
-log_device_placement=False
-confidence=0.8
-
-if eval_file==None or vocab_filepath==None or model==None :
-    print("Eval or Vocab filepaths are empty.")
-    exit()
+batch_size = 64  # 批大小
+vocab_filepath = './vocab/vocab'  # 训练使使用的词表
+model = './models/model-11000'  # 加载训练模型
+allow_soft_placement = True
+log_device_placement = False
+confidence = 0.8
 
 # load data and map id-transform based on training time vocabulary
 inpH = InputHelper()
-x1_test,x2_test= inpH.getTestDataSet(eval_file, vocab_filepath, 30)
+x1_test, x2_test = inpH.getTestDataSet(eval_file, vocab_filepath, 30)
 
 print("\nEvaluating...\n")
 
@@ -44,8 +39,8 @@ print checkpoint_file
 graph = tf.Graph()
 with graph.as_default():
     session_conf = tf.ConfigProto(
-      allow_soft_placement=allow_soft_placement,
-      log_device_placement=log_device_placement)
+        allow_soft_placement=allow_soft_placement,
+        log_device_placement=log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
         # Load the saved meta graph and restore variables
@@ -66,20 +61,21 @@ with graph.as_default():
 
         sim = graph.get_operation_by_name("accuracy/temp_sim").outputs[0]
 
-        #emb = graph.get_operation_by_name("embedding/W").outputs[0]
-        #embedded_chars = tf.nn.embedding_lookup(emb,input_x)
+        # emb = graph.get_operation_by_name("embedding/W").outputs[0]
+        # embedded_chars = tf.nn.embedding_lookup(emb,input_x)
         # Generate batches for one epoch
-        batches = inpH.batch_iter(list(zip(x1_test,x2_test)), 2 * batch_size, 1, shuffle=False)
+        batches = inpH.batch_iter(list(zip(x1_test, x2_test)), 2 * batch_size, 1, shuffle=False)
         # Collect the predictions here
         all_predictions = []
-        all_d=[]
+        all_d = []
 
         for db in batches:
             # print('db')
             # print(db)
             #
-            x1_dev_b,x2_dev_b= zip(*db)
-            batch_predictions, batch_sim = sess.run([predictions,sim], {input_x1: x1_dev_b, input_x2: x2_dev_b, dropout_keep_prob: 1.0})
+            x1_dev_b, x2_dev_b = zip(*db)
+            batch_predictions, batch_sim = sess.run([predictions, sim],
+                                                    {input_x1: x1_dev_b, input_x2: x2_dev_b, dropout_keep_prob: 1.0})
             all_predictions = np.concatenate([all_predictions, batch_predictions])
             print(batch_predictions)
             all_d = np.concatenate([all_d, batch_sim])
@@ -89,18 +85,16 @@ with graph.as_default():
 
         f_output = open(output_file, 'a')
         index = 1
-        predic_value=0
+        predic_value = 0
         for item in all_d:
-            if item>0:
-                predic_value=1
+            if item > 0:
+                predic_value = 1
             else:
-                predic_value=0
+                predic_value = 0
             f_output.write('{}\t{}\n'.format(index, predic_value))
-            index+=1
+            index += 1
 
         # correct_predictions = float(np.mean(all_d == y_test))
         # print("Accuracy: {:g}".format(correct_predictions))
 
         print ('eval finished!')
-
-

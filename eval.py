@@ -17,9 +17,9 @@ BATCH_SIZE = 64
 # 验证集文件
 EVAL_FILEPATH = 'validation.txt0'
 # 词表（在训练过程中已生成）
-VOCAB_FILEPATH = 'runs/1527909561/checkpoints/vocab'
+VOCAB_FILEPATH = 'runs/1527917207/checkpoints/vocab'
 # 模型文件
-MODEL = 'runs/1527909561/checkpoints/model-20000'
+MODEL = 'runs/1527917207/checkpoints/model-14000'
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True

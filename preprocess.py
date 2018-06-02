@@ -9,19 +9,13 @@ import six
 from tensorflow.contrib import learn
 from tensorflow.python.platform import gfile
 from tensorflow.contrib import learn  # pylint: disable=g-bad-import-order
-
-TOKENIZER_RE = re.compile(r"[A-Z]{2,}(?![a-z])|[A-Z][a-z]+(?=[A-Z])|[\'\w\-]+",
-                          re.UNICODE)
-
-
-def tokenizer_char(iterator):
-    for value in iterator:
-        yield list(value)
+import jieba
 
 
 def tokenizer_word(iterator):
-    for value in iterator:
-        yield TOKENIZER_RE.findall(value)
+    jieba.load_userdict('./dict.txt')
+    for sentence in iterator:
+        yield list(jieba.lcut(sentence))
 
 
 class MyVocabularyProcessor(learn.preprocessing.VocabularyProcessor):
@@ -43,7 +37,13 @@ class MyVocabularyProcessor(learn.preprocessing.VocabularyProcessor):
         Yields:
           x: iterable, [n_samples, max_document_length]. Word-id matrix.
         """
-        for tokens in self._tokenizer(raw_documents):
+        print ('len(raw_documents)= {}'.format(len(raw_documents)))
+        # print('raw_documents= {}'.format(raw_documents))
+
+        # for index,value in enumerate(raw_documents):
+        #     print(index, value)
+
+        for tokens in raw_documents:
             word_ids = np.zeros(self.max_document_length, np.int64)
             for idx, token in enumerate(tokens):
                 if idx >= self.max_document_length:
