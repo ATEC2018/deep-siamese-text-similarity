@@ -37,13 +37,13 @@ class MyVocabularyProcessor(learn.preprocessing.VocabularyProcessor):
         Yields:
           x: iterable, [n_samples, max_document_length]. Word-id matrix.
         """
-        print ('len(raw_documents)= {}'.format(len(raw_documents)))
+        print('len(raw_documents)= {}'.format(len(raw_documents)))
         # print('raw_documents= {}'.format(raw_documents))
 
         # for index,value in enumerate(raw_documents):
         #     print(index, value)
 
-        for tokens in raw_documents:
+        for tokens in self._tokenizer(raw_documents):
             word_ids = np.zeros(self.max_document_length, np.int64)
             for idx, token in enumerate(tokens):
                 if idx >= self.max_document_length:

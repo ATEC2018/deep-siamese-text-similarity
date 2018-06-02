@@ -49,14 +49,14 @@ EVALUATE_EVERY = 1000
 CHECKOUTPOINT_EVERY = 1000
 
 # 语句最多长度(包含多少个词)
-MAX_DOCUMENT_LENGTH = 15
+MAX_DOCUMENT_LENGTH = 50
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True
 LOG_DEVICE_PLACEMENT = False
 
 print ('训练开始......................')
-start_time = datetime.datetime.now().minute
+start_time = datetime.datetime.now()
 
 inpH = InputHelper()
 # 将原始的训练文件转化为分词后的训练文件
@@ -67,6 +67,10 @@ inpH = InputHelper()
 train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINING_FILES_RAW, MAX_DOCUMENT_LENGTH,
                                                                           10,
                                                                           BATCH_SIZE)
+# for index, value in enumerate(train_set[0]):
+#     print(index, value)
+# sys.exit(0)
+
 # for index, w in enumerate(vocab_processor.vocabulary_._mapping):
 #     print('vocab-{}:{}'.format(index, w))
 # sys.exit(0)
@@ -264,6 +268,8 @@ with tf.Graph().as_default():
 
         print('max_validation_acc(each batch)= {}'.format(max_validation_acc))
 
-end_time = datetime.datetime.now().minute
+end_time = datetime.datetime.now()
 train_duration = end_time - start_time
-print('训练结束, 训练总耗时: {} 分钟'.format(train_duration))
+print('训练开始时间: {}'.format(start_time))
+print('训练结束时间: {}'.format(end_time))
+print('训练结束, 训练总耗时: {}'.format(train_duration))
