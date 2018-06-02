@@ -34,8 +34,6 @@ DROPOUT_KEEP_PROB = '0.5'
 L2_REG_LAMBDA = 0.0
 # 原始训练文件
 TRAINING_FILES_RAW = './train_data/atec_nlp_sim_train.csv'
-# 训练文件已完成中文分词，并格式化为满足输入要求的文件格式
-TRAINING_FILES_FORMAT = './train_data/atec_nlp_sim_train_format.csv'
 # 隐藏层单元数
 HIDDEN_UNITS = 50
 

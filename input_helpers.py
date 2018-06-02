@@ -89,9 +89,9 @@ class InputHelper(object):
             l = line.strip().split("\t")
             if len(l) < 3:
                 continue
-            x1.append(l[1].lower())
-            x2.append(l[2].lower())
-            y.append(int(l[0]))  # np.array([0,1]))
+            x1.append(l[1])
+            x2.append(l[2])
+            y.append(int(l[0]))
         return np.asarray(x1), np.asarray(x2), np.asarray(y)
 
     def batch_iter(self, data, batch_size, num_epochs, shuffle=True):
