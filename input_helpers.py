@@ -23,21 +23,6 @@ class InputHelper(object):
     pre_emb = dict()
     vocab_processor = None
 
-    def cleanText(self, s):
-        s = re.sub(r"[^\x00-\x7F]+", " ", s)
-        s = re.sub(r'[\~\!\`\^\*\{\}\[\]\#\<\>\?\+\=\-\_\(\)]+', "", s)
-        s = re.sub(r'( [0-9,\.]+)', r"\1 ", s)
-        s = re.sub(r'\$', " $ ", s)
-        s = re.sub('[ ]+', ' ', s)
-        return s.lower()
-
-    def getVocab(self, vocab_path, max_document_length, filter_h_pad):
-        if self.vocab_processor == None:
-            print('locading vocab')
-            vocab_processor = MyVocabularyProcessor(max_document_length - filter_h_pad, min_frequency=0)
-            self.vocab_processor = vocab_processor.restore(vocab_path)
-        return self.vocab_processor
-
     def loadW2V(self, emb_path, type="bin"):
         print("Loading W2V data...")
         num_keys = 0
@@ -92,33 +77,6 @@ class InputHelper(object):
         # print(x1)
         # print(x2)
         # print(y)
-        return np.asarray(x1), np.asarray(x2), np.asarray(y)
-
-    def getTsvDataCharBased(self, filepath):
-        print("Loading training data from " + filepath)
-        x1 = []
-        x2 = []
-        y = []
-        # positive samples from file
-        for line in open(filepath):
-            l = line.strip().split("\t")
-            if len(l) < 2:
-                continue
-            if random() > 0.5:
-                x1.append(l[0].lower())
-                x2.append(l[1].lower())
-            else:
-                x1.append(l[1].lower())
-                x2.append(l[0].lower())
-            y.append(1)  # np.array([0,1]))
-        # generate random negative samples
-        combined = np.asarray(x1 + x2)
-        shuffle_indices = np.random.permutation(np.arange(len(combined)))
-        combined_shuff = combined[shuffle_indices]
-        for i in xrange(len(combined)):
-            x1.append(combined[i])
-            x2.append(combined_shuff[i])
-            y.append(0)  # np.array([1,0]))
         return np.asarray(x1), np.asarray(x2), np.asarray(y)
 
     def getTsvTestData(self, filepath):
@@ -189,9 +147,6 @@ class InputHelper(object):
         vocab_processor.fit_transform(np.concatenate((x2_text, x1_text), axis=0))
         print("Length of loaded vocabulary ={}".format(len(vocab_processor.vocabulary_)))
 
-        i1 = 0
-        train_set = []
-        dev_set = []
         sum_no_of_batches = 0
         x1 = np.asarray(list(vocab_processor.transform(x1_text)))
         x2 = np.asarray(list(vocab_processor.transform(x2_text)))
@@ -202,6 +157,8 @@ class InputHelper(object):
         x2_shuffled = x2[shuffle_indices]
         y_shuffled = y[shuffle_indices]
         dev_idx = -1 * len(y_shuffled) * percent_dev // 100
+        print('dev_idx= {}'.format(dev_idx))
+
         del x1
         del x2
         # Split train/test set
@@ -231,46 +188,3 @@ class InputHelper(object):
         del vocab_processor
         gc.collect()
         return x1, x2, y
-
-    def train_file_preprocess(self, input_file, output_file):
-        '''
-        完成中文分词，并格式化为满足输入要求的文件格式
-        :param input_file:
-        :param output_file:
-        :return:
-        '''
-        f_input = open(input_file, 'r')
-        f_output = open(output_file, 'w')
-        lines_input = f_input.readlines()
-        cnt = 0;
-        jieba.load_userdict('./dict.txt')
-        for row in lines_input:
-            cnt += 1
-            # print(cnt)
-
-            list = row.split('\t')
-            # part 1
-            sentence1 = list[1].strip()
-            # print (sentence1)
-            sentence1 = jieba.lcut(sentence1)
-            format_sentence1 = ''
-            for word in sentence1:
-                format_sentence1 += ' {}'.format(word)
-            # print (format_sentence1)
-
-            # part2
-            sentence2 = list[2].strip()
-            # print (sentence2)
-
-            sentence2 = jieba.lcut(sentence2)
-            format_sentence2 = ''
-            for word in sentence2:
-                format_sentence2 += ' {}'.format(word)
-            # print (format_sentence2)
-
-            # part3
-            val = list[3].strip()
-            # print (val)
-
-            format_sentence_all = format_sentence1.strip() + '\t' + format_sentence2.strip() + '\t' + val + '\n'
-            f_output.write(format_sentence_all)

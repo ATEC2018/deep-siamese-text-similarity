@@ -32,6 +32,10 @@ inpH = InputHelper()
 
 x1_test, x2_test, y_test = inpH.getTestDataSet(EVAL_FILEPATH, VOCAB_FILEPATH, MAX_DOCUMENT_LENGTH)
 
+# for index ,value in enumerate(x1_test):
+#     print (index, x1_test[index], x2_test[index], y_test[index])
+# sys.exit(0)
+
 print("\nEvaluating...\n")
 
 # Evaluation

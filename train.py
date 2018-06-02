@@ -27,8 +27,9 @@ WORD2VEC_FORMAT = 'bin'
 # word2vec词嵌入维数（64/128可选）
 EMBEDDING_DIM = 64
 # dropout比例设置
-# DROPOUT_KEEP_PROB = '0.5'
-DROPOUT_KEEP_PROB = '1.0'
+# DROPOUT_KEEP_PROB = '0.7'
+DROPOUT_KEEP_PROB = '0.5'
+# DROPOUT_KEEP_PROB = '1.0'
 # L2正规化系数
 L2_REG_LAMBDA = 0.0
 # 原始训练文件
@@ -68,7 +69,7 @@ train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINI
                                                                           10,
                                                                           BATCH_SIZE)
 
-dev_batches = inpH.batch_iter(list(zip(dev_set[0], dev_set[1], dev_set[2])), BATCH_SIZE, 1)
+# dev_batches = inpH.batch_iter(list(zip(dev_set[0], dev_set[1], dev_set[2])), BATCH_SIZE, 1)
 # for index,dev_batch in enumerate(dev_batches):
 #     print(index, dev_batch)
 # sys.exit(0)
