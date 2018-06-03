@@ -44,9 +44,9 @@ BATCH_SIZE = 64
 NUM_EPOCHS = 300
 # 模型评估周期（每隔多少步）
 EVALUATE_EVERY = 1000
+# EVALUATE_EVERY = 10
 # 模型保存周期(每隔多少步)
 CHECKOUTPOINT_EVERY = 1000
-
 # 语句最多长度(包含多少个词)
 MAX_DOCUMENT_LENGTH = 12
 
@@ -80,27 +80,25 @@ train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINI
 #     print('vocab-{}:{}'.format(index, w))
 # sys.exit(0)
 
-inpH.loadW2V(WORD2VEC_MODEL, WORD2VEC_FORMAT)
-
 with tf.Graph().as_default():
     session_conf = tf.ConfigProto(
         allow_soft_placement=ALLOW_SOFT_PLACEMENT,
         log_device_placement=LOG_DEVICE_PLACEMENT)
     sess = tf.Session(config=session_conf)
-    sess.as_default()
 
-    siameseModel = SiameseLSTMw2v(
-        sequence_length=MAX_DOCUMENT_LENGTH,
-        vocab_size=len(vocab_processor.vocabulary_),
-        embedding_size=EMBEDDING_DIM,
-        hidden_units=HIDDEN_UNITS,
-        l2_reg_lambda=L2_REG_LAMBDA,
-        batch_size=BATCH_SIZE,
-        trainableEmbeddings=False
-    )
-    # Define Training procedure
-    global_step = tf.Variable(0, name="global_step", trainable=False)
-    optimizer = tf.train.AdamOptimizer(1e-3)
+    with sess.as_default():
+        siameseModel = SiameseLSTMw2v(
+            sequence_length=MAX_DOCUMENT_LENGTH,
+            vocab_size=len(vocab_processor.vocabulary_),
+            embedding_size=EMBEDDING_DIM,
+            hidden_units=HIDDEN_UNITS,
+            l2_reg_lambda=L2_REG_LAMBDA,
+            batch_size=BATCH_SIZE,
+            trainableEmbeddings=False
+        )
+        # Define Training procedure
+        global_step = tf.Variable(0, name="global_step", trainable=False)
+        optimizer = tf.train.AdamOptimizer(1e-3)
 
     grads_and_vars = optimizer.compute_gradients(siameseModel.loss)
     tr_op_set = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
@@ -153,12 +151,18 @@ with tf.Graph().as_default():
     with open(os.path.join(checkpoint_dir, "graphpb.txt"), 'w') as f:
         f.write(graphpb_txt)
 
+    # 加载word2vec
+    inpH.loadW2V(WORD2VEC_MODEL, WORD2VEC_FORMAT)
     # initial matrix with random uniform
-    initW = np.random.uniform(-0.25, 0.25, (len(vocab_processor.vocabulary_), EMBEDDING_DIM))
+    # initW = np.random.uniform(-0.25, 0.25, (len(vocab_processor.vocabulary_), EMBEDDING_DIM))
+    initW = np.random.uniform(0, 0, (len(vocab_processor.vocabulary_), EMBEDDING_DIM))
+    # print(initW)
+    # sys.exit(0)
+
     # load any vectors from the word2vec
     print("initializing initW with pre-trained word2vec embeddings")
     for index, w in enumerate(vocab_processor.vocabulary_._mapping):
-        print('vocab-{}:{}'.format(index, w))
+        # print('vocab-{}:{}'.format(index, w))
 
         arr = []
         if w in inpH.pre_emb:
@@ -168,6 +172,11 @@ with tf.Graph().as_default():
             idx = vocab_processor.vocabulary_.get(w)
             initW[idx] = np.asarray(arr).astype(np.float32)
     print("Done assigning intiW. len=" + str(len(initW)))
+
+    # for idx, value in enumerate(initW):
+    #     print(idx, value)
+    # sys.exit(0)
+
     inpH.deletePreEmb()
     gc.collect()
     sess.run(siameseModel.W.assign(initW))
@@ -177,6 +186,22 @@ with tf.Graph().as_default():
         """
         A single training step
         """
+        # for index, sentence in enumerate(x1_batch):
+        #     word_list1=[]
+        #     word_list2=[]
+        #     y=y_batch[index]
+        #     for idx in x1_batch[index]:
+        #         word_list1.append(vocab_processor.vocabulary_.reverse(idx))
+        #     for idx in x2_batch[index]:
+        #         word_list2.append(vocab_processor.vocabulary_.reverse(idx))
+        #
+        #     # print(''.join(word_list1),'\t',''.join(word_list2),'\t',y)
+        #     print('==========={}=============='.format(index))
+        #     print(''.join(word_list1))
+        #     print (''.join(word_list2))
+        #     print(y)
+        # sys.exit(0)
+
         if random() > 0.5:
             feed_dict = {
                 siameseModel.input_x1: x1_batch,
@@ -204,6 +229,22 @@ with tf.Graph().as_default():
         """
         A single training step
         """
+        # for index, sentence in enumerate(x1_batch):
+        #     word_list1=[]
+        #     word_list2=[]
+        #     y=y_batch[index]
+        #     for idx in x1_batch[index]:
+        #         word_list1.append(vocab_processor.vocabulary_.reverse(idx))
+        #     for idx in x2_batch[index]:
+        #         word_list2.append(vocab_processor.vocabulary_.reverse(idx))
+        #
+        #     # print(''.join(word_list1),'\t',''.join(word_list2),'\t',y)
+        #     print('==========={}=============='.format(index))
+        #     print(''.join(word_list1))
+        #     print (''.join(word_list2))
+        #     print(y)
+        # sys.exit(0)
+
         if random() > 0.5:
             feed_dict = {
                 siameseModel.input_x1: x1_batch,

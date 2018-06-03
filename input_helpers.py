@@ -99,8 +99,8 @@ class InputHelper(object):
         Generates a batch iterator for a dataset.
         """
         data = np.asarray(data)
-        print(data)
-        print(data.shape)
+        # print(data)
+        # print(data.shape)
         data_size = len(data)
         num_batches_per_epoch = int(len(data) / batch_size) + 1
         for epoch in range(num_epochs):
