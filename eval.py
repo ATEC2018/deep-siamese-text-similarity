@@ -17,12 +17,12 @@ BATCH_SIZE = 64
 # 验证集文件
 EVAL_FILEPATH = 'validation.txt0'
 # 词表（在训练过程中已生成）
-VOCAB_FILEPATH = 'runs/1527938927/checkpoints/vocab'
+VOCAB_FILEPATH = 'runs/1528024251/checkpoints/vocab'
 # 模型文件
-MODEL = 'runs/1527938927/checkpoints/model-22000'
+MODEL = 'runs/1528024251/checkpoints/model-432000'
 
 # 语句最多长度(包含多少个词)
-MAX_DOCUMENT_LENGTH = 12
+MAX_DOCUMENT_LENGTH = 8
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True

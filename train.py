@@ -300,11 +300,15 @@ with tf.Graph().as_default():
         if current_step % CHECKOUTPOINT_EVERY == 0:
             if sum_acc >= max_validation_acc:
                 max_validation_acc = sum_acc
-                saver.save(sess, checkpoint_prefix, global_step=current_step)
-                tf.train.write_graph(sess.graph.as_graph_def(), checkpoint_prefix, "graph" + str(nn) + ".pb",
-                                     as_text=False)
-                print("Saved model {} with sum_accuracy={} checkpoint to {}\n".format(nn, max_validation_acc,
-                                                                                      checkpoint_prefix))
+
+            # 临时逻辑
+            saver.save(sess, checkpoint_prefix, global_step=current_step)
+            tf.train.write_graph(sess.graph.as_graph_def(), checkpoint_prefix, "graph" + str(nn) + ".pb",
+                                 as_text=False)
+            print("Saved model {} with sum_accuracy={} checkpoint to {}\n".format(nn, max_validation_acc,
+                                                                                  checkpoint_prefix))
+
+
 
         print('max_validation_acc(each batch)= {}'.format(max_validation_acc))
 

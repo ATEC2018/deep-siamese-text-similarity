@@ -65,14 +65,10 @@ class InputHelper(object):
             # print(l[0])
             # print(l[1])
             # print(l[2])
-
-            if random() > 0.5:
-                x1.append(l[1].lower())
-                x2.append(l[2].lower())
-            else:
-                x1.append(l[2].lower())
-                x2.append(l[1].lower())
-            y.append(int(l[3]))
+            if len(l) >= 4:
+                x1.append(l[1])
+                x2.append(l[2])
+                y.append(int(l[3]))
 
         # print(x1)
         # print(x2)
