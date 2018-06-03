@@ -28,7 +28,7 @@ WORD2VEC_FORMAT = 'bin'
 EMBEDDING_DIM = 64
 # dropout比例设置
 # DROPOUT_KEEP_PROB = '0.7'
-DROPOUT_KEEP_PROB = '0.5'
+DROPOUT_KEEP_PROB = '0.8'
 # DROPOUT_KEEP_PROB = '1.0'
 # L2正规化系数
 L2_REG_LAMBDA = 0.0
@@ -48,7 +48,11 @@ EVALUATE_EVERY = 1000
 # 模型保存周期(每隔多少步)
 CHECKOUTPOINT_EVERY = 1000
 # 语句最多长度(包含多少个词)
-MAX_DOCUMENT_LENGTH = 12
+# MAX_DOCUMENT_LENGTH = 12
+MAX_DOCUMENT_LENGTH = 8
+
+# 验证集比例
+DEV_PERCENT=10
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True
@@ -64,7 +68,7 @@ inpH = InputHelper()
 
 
 train_set, dev_set, vocab_processor, sum_no_of_batches = inpH.getDataSets(TRAINING_FILES_RAW, MAX_DOCUMENT_LENGTH,
-                                                                          10,
+                                                                          DEV_PERCENT,
                                                                           BATCH_SIZE)
 
 # dev_batches = inpH.batch_iter(list(zip(dev_set[0], dev_set[1], dev_set[2])), BATCH_SIZE, 1)
@@ -168,9 +172,15 @@ with tf.Graph().as_default():
         if w in inpH.pre_emb:
             arr = inpH.pre_emb[w]
             # print('=====arr-{},{}'.format(index, arr))
-        if len(arr) > 0:
             idx = vocab_processor.vocabulary_.get(w)
             initW[idx] = np.asarray(arr).astype(np.float32)
+
+        #不使用词向量
+        # arr=[]
+        # idx = vocab_processor.vocabulary_.get(w)
+        # arr.append(idx)
+        # initW[idx] = np.asarray(arr).astype(np.float32)
+
     print("Done assigning intiW. len=" + str(len(initW)))
 
     # for idx, value in enumerate(initW):
@@ -202,20 +212,12 @@ with tf.Graph().as_default():
         #     print(y)
         # sys.exit(0)
 
-        if random() > 0.5:
-            feed_dict = {
-                siameseModel.input_x1: x1_batch,
-                siameseModel.input_x2: x2_batch,
-                siameseModel.input_y: y_batch,
-                siameseModel.dropout_keep_prob: DROPOUT_KEEP_PROB,
-            }
-        else:
-            feed_dict = {
-                siameseModel.input_x1: x2_batch,
-                siameseModel.input_x2: x1_batch,
-                siameseModel.input_y: y_batch,
-                siameseModel.dropout_keep_prob: DROPOUT_KEEP_PROB,
-            }
+        feed_dict = {
+            siameseModel.input_x1: x1_batch,
+            siameseModel.input_x2: x2_batch,
+            siameseModel.input_y: y_batch,
+            siameseModel.dropout_keep_prob: DROPOUT_KEEP_PROB,
+        }
         _, step, loss, accuracy, dist, sim, summaries = sess.run(
             [tr_op_set, global_step, siameseModel.loss, siameseModel.accuracy, siameseModel.distance,
              siameseModel.temp_sim, train_summary_op], feed_dict)
@@ -245,20 +247,12 @@ with tf.Graph().as_default():
         #     print(y)
         # sys.exit(0)
 
-        if random() > 0.5:
-            feed_dict = {
-                siameseModel.input_x1: x1_batch,
-                siameseModel.input_x2: x2_batch,
-                siameseModel.input_y: y_batch,
-                siameseModel.dropout_keep_prob: 1.0,
-            }
-        else:
-            feed_dict = {
-                siameseModel.input_x1: x2_batch,
-                siameseModel.input_x2: x1_batch,
-                siameseModel.input_y: y_batch,
-                siameseModel.dropout_keep_prob: 1.0,
-            }
+        feed_dict = {
+            siameseModel.input_x1: x2_batch,
+            siameseModel.input_x2: x1_batch,
+            siameseModel.input_y: y_batch,
+            siameseModel.dropout_keep_prob: 1.0,
+        }
         step, loss, accuracy, sim, summaries = sess.run(
             [global_step, siameseModel.loss, siameseModel.accuracy, siameseModel.temp_sim, dev_summary_op], feed_dict)
         time_str = datetime.datetime.now().isoformat()
