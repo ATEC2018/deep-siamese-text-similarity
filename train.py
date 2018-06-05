@@ -52,7 +52,7 @@ CHECKOUTPOINT_EVERY = 1000
 MAX_DOCUMENT_LENGTH = 8
 
 # 验证集比例
-DEV_PERCENT=10
+DEV_PERCENT = 10
 
 # Misc Parameters
 ALLOW_SOFT_PLACEMENT = True
@@ -125,14 +125,15 @@ with tf.Graph().as_default():
     # Summaries for loss and accuracy
     loss_summary = tf.summary.scalar("loss", siameseModel.loss)
     acc_summary = tf.summary.scalar("accuracy", siameseModel.accuracy)
+    f1_summary = tf.summary.scalar('f1', siameseModel.f1)
 
     # Train Summaries
-    train_summary_op = tf.summary.merge([loss_summary, acc_summary, grad_summaries_merged])
+    train_summary_op = tf.summary.merge([loss_summary, acc_summary, f1_summary, grad_summaries_merged])
     train_summary_dir = os.path.join(out_dir, "summaries", "train")
     train_summary_writer = tf.summary.FileWriter(train_summary_dir, sess.graph)
 
     # Dev summaries
-    dev_summary_op = tf.summary.merge([loss_summary, acc_summary])
+    dev_summary_op = tf.summary.merge([loss_summary, acc_summary, f1_summary])
     dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
     dev_summary_writer = tf.summary.FileWriter(dev_summary_dir, sess.graph)
 
@@ -175,7 +176,7 @@ with tf.Graph().as_default():
             idx = vocab_processor.vocabulary_.get(w)
             initW[idx] = np.asarray(arr).astype(np.float32)
 
-        #不使用词向量
+        # 不使用词向量
         # arr=[]
         # idx = vocab_processor.vocabulary_.get(w)
         # arr.append(idx)
@@ -218,11 +219,11 @@ with tf.Graph().as_default():
             siameseModel.input_y: y_batch,
             siameseModel.dropout_keep_prob: DROPOUT_KEEP_PROB,
         }
-        _, step, loss, accuracy, dist, sim, summaries = sess.run(
-            [tr_op_set, global_step, siameseModel.loss, siameseModel.accuracy, siameseModel.distance,
+        _, step, loss, accuracy, f1, dist, sim, summaries = sess.run(
+            [tr_op_set, global_step, siameseModel.loss, siameseModel.accuracy, siameseModel.f1, siameseModel.distance,
              siameseModel.temp_sim, train_summary_op], feed_dict)
         time_str = datetime.datetime.now().isoformat()
-        print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+        print("TRAIN {}: step {}, loss {:g}, acc {:g}, f1 {:g}".format(time_str, step, loss, accuracy, f1))
         train_summary_writer.add_summary(summaries, step)
         print(y_batch, dist, sim)
 
@@ -253,10 +254,11 @@ with tf.Graph().as_default():
             siameseModel.input_y: y_batch,
             siameseModel.dropout_keep_prob: 1.0,
         }
-        step, loss, accuracy, sim, summaries = sess.run(
-            [global_step, siameseModel.loss, siameseModel.accuracy, siameseModel.temp_sim, dev_summary_op], feed_dict)
+        step, loss, accuracy, f1, sim, summaries = sess.run(
+            [global_step, siameseModel.loss, siameseModel.accuracy, siameseModel.f1, siameseModel.temp_sim,
+             dev_summary_op], feed_dict)
         time_str = datetime.datetime.now().isoformat()
-        print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+        print("DEV {}: step {}, loss {:g}, acc {:g}, f1 {:g}".format(time_str, step, loss, accuracy, f1))
         dev_summary_writer.add_summary(summaries, step)
         print (y_batch, sim)
         return accuracy
@@ -307,8 +309,6 @@ with tf.Graph().as_default():
                                  as_text=False)
             print("Saved model {} with sum_accuracy={} checkpoint to {}\n".format(nn, max_validation_acc,
                                                                                   checkpoint_prefix))
-
-
 
         print('max_validation_acc(each batch)= {}'.format(max_validation_acc))
 

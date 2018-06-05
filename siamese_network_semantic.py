@@ -74,3 +74,54 @@ class SiameseLSTMw2v(object):
                                         name="temp_sim")  # auto threshold 0.5
             correct_predictions = tf.equal(self.temp_sim, self.input_y)
             self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, "float"), name="accuracy")
+
+        with tf.name_scope('f1'):
+            ones_like_actuals = tf.ones_like(self.input_y)
+            zeros_like_actuals = tf.zeros_like(self.input_y)
+            ones_like_predictions = tf.ones_like(self.temp_sim)
+            zeros_like_predictions = tf.zeros_like(self.temp_sim)
+
+            tp = tf.reduce_sum(
+                tf.cast(
+                    tf.logical_and(
+                        tf.equal(self.input_y, ones_like_actuals),
+                        tf.equal(self.temp_sim, ones_like_predictions)
+                    ),
+                    'float'
+                )
+            )
+
+            tn = tf.reduce_sum(
+                tf.cast(
+                    tf.logical_and(
+                        tf.equal(self.input_y, zeros_like_actuals),
+                        tf.equal(self.temp_sim, zeros_like_predictions)
+                    ),
+                    'float'
+                )
+            )
+
+            fp = tf.reduce_sum(
+                tf.cast(
+                    tf.logical_and(
+                        tf.equal(self.input_y, zeros_like_actuals),
+                        tf.equal(self.temp_sim, ones_like_predictions)
+                    ),
+                    'float'
+                )
+            )
+
+            fn = tf.reduce_sum(
+                tf.cast(
+                    tf.logical_and(
+                        tf.equal(self.input_y, ones_like_actuals),
+                        tf.equal(self.temp_sim, zeros_like_predictions)
+                    ),
+                    'float'
+                )
+            )
+
+            precision = tp / (tp + fp)
+            recall = tp / (tp + fn)
+
+            self.f1 = 2 * precision * recall / (precision + recall)
