@@ -20,12 +20,12 @@ print (OUTPUT_FILE)
 # Eval Parameters
 BATCH_SIZE = 64  # 批大小
 VOCAB_FILE = './vocab/vocab'  # 训练使使用的词表
-MODEL = './models/model-432000'  # 加载训练模型
+MODEL = './models/model-10000'  # 加载训练模型
 ALLOW_SOFT_PLACEMENT = True
 LOG_DEVICE_PLACEMENT = False
 
 # 语句最多长度(包含多少个词)
-MAX_DOCUMENT_LENGTH = 8
+MAX_DOCUMENT_LENGTH = 30
 
 # load data and map id-transform based on training time vocabulary
 inpH = InputHelper()

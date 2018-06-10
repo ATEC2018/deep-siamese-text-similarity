@@ -15,6 +15,9 @@ import jieba
 def tokenizer_word(iterator):
     jieba.load_userdict('./dict.txt')
     for sentence in iterator:
+        sentence = sentence.decode("utf8")
+        sentence = re.sub("[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。：？?、~@#￥%……&*（）]+".decode("utf8"), "".decode("utf8"),
+                          sentence)
         yield list(jieba.lcut(sentence))
 
 
