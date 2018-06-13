@@ -22,6 +22,9 @@
 
 ### 模型评估
         # python eval.py
+## 论文参考
+* [《Learning Text Similarity with Siamese Recurrent Networks》](http://www.aclweb.org/anthology/W16-16#page=162)
+* [《Siamese Recurrent Architectures for Learning Sentence Similarity》](http://www.mit.edu/~jonasm/info/MuellerThyagarajan_AAAI16.pdf)
 
 # 代码参考
 
