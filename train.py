@@ -28,14 +28,14 @@ WORD2VEC_FORMAT = 'bin'
 EMBEDDING_DIM = 64
 # dropout比例设置
 # DROPOUT_KEEP_PROB = '0.3'#训练集的拟合能力不够
-DROPOUT_KEEP_PROB = '0.5'
+DROPOUT_KEEP_PROB = '0.8'
 # DROPOUT_KEEP_PROB = '0.6'
 # DROPOUT_KEEP_PROB = '0.7'
 # DROPOUT_KEEP_PROB = '0.8'
 # DROPOUT_KEEP_PROB = '1.0'(7th-June)
 # DROPOUT_KEEP_PROB = '0.8'
 # DROPOUT_KEEP_PROB = '0.4'#训练集的拟合能力不够
-# L2正规化系数
+# L2正规化系数(目前暂未生效)
 L2_REG_LAMBDA = 0.0
 # 原始训练文件
 TRAINING_FILES_RAW = './train_data/atec_nlp_sim_train.csv'
@@ -54,7 +54,7 @@ BATCH_SIZE = 1024  # 92229=102477-10248
 NUM_EPOCHS = 100000
 # 模型评估周期（每隔多少步）
 # EVALUATE_EVERY = 10(7th-June)
-EVALUATE_EVERY = 10
+EVALUATE_EVERY = 100
 # EVALUATE_EVERY = 10
 # 模型保存周期(每隔多少步)
 # CHECKOUTPOINT_EVERY = 1000
@@ -65,7 +65,7 @@ CHECKOUTPOINT_EVERY = 1000
 # MAX_DOCUMENT_LENGTH = 12
 # MAX_DOCUMENT_LENGTH = 8
 # MAX_DOCUMENT_LENGTH = 20(7th-June)
-MAX_DOCUMENT_LENGTH = 30
+MAX_DOCUMENT_LENGTH = 40
 # 验证集比例
 DEV_PERCENT = 10
 
@@ -198,6 +198,7 @@ with tf.Graph().as_default():
         # initW[idx] = np.asarray(arr).astype(np.float32)
 
     print("Done assigning intiW. len=" + str(len(initW)))
+    # exit(0)
 
     # for idx, value in enumerate(initW):
     #     print(idx, value)

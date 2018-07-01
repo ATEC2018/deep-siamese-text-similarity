@@ -20,12 +20,12 @@ print (OUTPUT_FILE)
 # Eval Parameters
 BATCH_SIZE = 64  # 批大小
 VOCAB_FILE = './vocab/vocab'  # 训练使使用的词表
-MODEL = './models/model-10000'  # 加载训练模型
+MODEL = './models/model-4000'  # 加载训练模型
 ALLOW_SOFT_PLACEMENT = True
 LOG_DEVICE_PLACEMENT = False
 
 # 语句最多长度(包含多少个词)
-MAX_DOCUMENT_LENGTH = 30
+MAX_DOCUMENT_LENGTH = 40
 
 # load data and map id-transform based on training time vocabulary
 inpH = InputHelper()
@@ -81,7 +81,10 @@ with graph.as_default():
             batch_predictions, batch_sim = sess.run([predictions, sim],
                                                     {input_x1: x1_dev_b, input_x2: x2_dev_b, dropout_keep_prob: 1.0})
             all_predictions = np.concatenate([all_predictions, batch_predictions])
-            print(batch_predictions)
+            # print(batch_predictions)
+            print(batch_sim)
+            print(type(batch_sim))
+            print(len(batch_sim))
             all_d = np.concatenate([all_d, batch_sim])
             # print("DEV acc {}".format(batch_acc))
         for ex in all_predictions:

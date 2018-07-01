@@ -1,5 +1,6 @@
 # coding=utf-8
 import tensorflow as tf
+import tensorflow.contrib.slim as slim
 import numpy as np
 
 
@@ -11,8 +12,8 @@ class SiameseLSTMw2v(object):
 
     def stackedRNN(self, x, dropout, scope, embedding_size, sequence_length, hidden_units):
         n_hidden = hidden_units
-        # n_layers = 3
-        n_layers = 6
+        n_layers = 3
+        # n_layers = 6
         # Prepare data shape to match `static_rnn` function requirements
         x = tf.unstack(tf.transpose(x, perm=[1, 0, 2]))
         # print(x)
@@ -34,7 +35,8 @@ class SiameseLSTMw2v(object):
         tmp = y * tf.square(d)
         # tmp= tf.mul(y,tf.square(d))
         tmp2 = (1 - y) * tf.square(tf.maximum((1 - d), 0))
-        return tf.reduce_sum(tmp + tmp2) / batch_size / 2
+        reg = tf.contrib.layers.apply_regularization(tf.contrib.layers.l2_regularizer(1e-4), tf.trainable_variables())
+        return tf.reduce_sum(tmp + tmp2) / batch_size / 2+reg
 
     def __init__(
             self, sequence_length, vocab_size, embedding_size, hidden_units, l2_reg_lambda, batch_size,
